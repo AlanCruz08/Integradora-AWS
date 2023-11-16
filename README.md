@@ -7,7 +7,7 @@ phplocal: 8.1
 phplaravel: 8.0
 mongodb.dll: 1.13
 mongodb/mongodb: 1.12
-jenssegers/mongodb: 3.9.5
+mongodb/laravel-mongodb: 3.9.5
 
 ## Extensiones para el archivo php.ini
 extension=curl
