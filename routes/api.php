@@ -2,7 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\RegistroController;
+use App\Http\Controllers\Api\DispositivosController;
+use App\Http\Controllers\Api\InfoGeneralController;
+use App\Http\Controllers\Api\SensorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,9 +21,26 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::controller(RegistroController::class)->group(function(){
-    Route::get('registros', [RegistroController::class, 'index']);
-    Route::post('registros', [RegistroController::class, 'store']);
-    Route::put('registros/{registro}', [RegistroController::class, 'update']);
-    Route::delete('registros/{registro}', [RegistroController::class, 'destroy']);
+Route::controller(DispositivosController::class)->group(function(){
+    Route::get('dispositivos', 'index');
+    Route::post('dispositivos','store');
+    Route::put('dispositivos/{registro}', 'update');
+    Route::delete('dispositivos/{registro}', 'destroy');
 });
+
+Route::controller(InfoGeneralController::class)->group(function(){
+    Route::get('infogeneral', 'index');
+    Route::post('infogeneral','store');
+    Route::put('infogeneral/{registro}', 'update');
+    Route::delete('infogeneral/{registro}', 'destroy');
+});
+
+Route::controller(SensorController::class)->group(function(){
+    Route::get('sensor', 'index');
+    Route::post('sensor','store');
+    Route::put('sensor/{registro}', 'update');
+    Route::delete('sensor/{registro}', 'destroy');
+});
+
+
+
