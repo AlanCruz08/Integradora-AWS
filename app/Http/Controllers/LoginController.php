@@ -182,7 +182,7 @@ class LoginController extends Controller
         Mail::to($email)->send(new ConfirmacionMail($number));
 
         return response()->json([
-            'msg' => 'Correo enviado',
+            'msg' => 'Correo Enviado',
             'data' => $email,
             'status' => 201
         ], 201);
@@ -194,7 +194,7 @@ class LoginController extends Controller
 
         if ($validacion->fails())
             return response()->json([
-                'msg' => 'Error en las validaciones',
+                'msg' => 'Error en las Validaciones',
                 'data' => $validacion->errors(),
                 'status' => '422'
             ], 422);
@@ -205,7 +205,7 @@ class LoginController extends Controller
 
         if (!$relation)
             return response()->json([
-                'msg' => 'Codigo no valido',
+                'msg' => 'Codigo no Valido',
                 'data' => null,
                 'status' => 404
             ], 404);
@@ -214,7 +214,7 @@ class LoginController extends Controller
 
         if (!$verify)
             return response()->json([
-                'msg' => 'Error al verificar',
+                'msg' => 'Error al Verificar',
                 'data' => null,
                 'status' => 404
             ], 404);

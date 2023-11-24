@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\DispositivosController;
 use App\Http\Controllers\Api\InfoGeneralController;
 use App\Http\Controllers\Api\SensorController;
+use App\Http\Controllers\Api\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,6 +41,16 @@ Route::controller(SensorController::class)->group(function(){
     Route::post('sensor','store');
     Route::put('sensor/{registro}', 'update');
     Route::delete('sensor/{registro}', 'destroy');
+});
+
+Route::controller(LoginController::class)->group(function(){
+    Route::post('login', 'login');
+    Route::post('register', 'register');
+    Route::post('validate', 'validateUser');
+    Route::post('verificar', 'verificar');
+    Route::post('recuperar', 'recuperar');
+    Route::post('cambiar', 'cambiar');
+    Route::post('logout', 'logout');
 });
 
 
