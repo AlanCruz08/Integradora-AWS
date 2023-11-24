@@ -46,10 +46,6 @@ Route::controller(SensorController::class)->group(function(){
 Route::controller(LoginController::class)->group(function(){
     Route::post('login', 'login');
     Route::post('register', 'register');
-    Route::post('validate', 'validateUser');
-    Route::post('verificar', 'verificar');
-    Route::post('recuperar', 'recuperar');
-    Route::post('cambiar', 'cambiar');
     Route::post('logout', 'logout');
 });
 
