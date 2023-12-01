@@ -19,9 +19,9 @@ class SensorController extends Controller
     {
         $sensores = new Sensores();
 
-        $sensores->numsensor = $request->numsensor;
-        $sensores->valor = $request->valor;
-        $sensores->descripcion = $request->descripcion;
+        $sensores->N_sensor = $request->N_sensor;
+        $sensores->Valor = $request->Valor;
+        $sensores->Descripcion = $request->Descripcion;
         
         $sensores->save();
 
@@ -32,9 +32,9 @@ class SensorController extends Controller
     {
         $sensores=Sensores::findOrfail($sensores->id);
 
-        $sensores->numsensor = $request->numsensor;
-        $sensores->valor = $request->valor;
-        $sensores->descripcion = $request->descripcion;
+        $sensores->N_sensor = $request->N_sensor;
+        $sensores->Valor = $request->Valor;
+        $sensores->Descripcion = $request->Descripcion;
         
         $sensores->save();
 

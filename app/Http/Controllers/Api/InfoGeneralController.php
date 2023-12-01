@@ -17,13 +17,14 @@ class InfoGeneralController extends Controller
 
     public function store(Request $request)
     {
-       $infogeneral = new InfoGeneral();
+        $infogeneral = new InfoGeneral();
 
-       $infogeneral->tipo = $request->tipo;
-       $infogeneral->numsensor = $request->numsensor;
-       $infogeneral->Unidades = $request->Unidades;
-       $infogeneral->SKU = $request->SKU;
-       $infogeneral->Fecha = $request->Fecha;
+        $infogeneral->SKU = $request->SKU;
+        $infogeneral->N_sensor = $request->N_sensor;
+        $infogeneral->Tipo = $request->Tipo;
+        $infogeneral->Nombre = $request->Nombre;
+        $infogeneral->Unidades = $request->Unidades;
+        $infogeneral->Fecha = $request->Fecha;
        
        $infogeneral->save();
 
@@ -34,11 +35,13 @@ class InfoGeneralController extends Controller
     {
         $infogeneral=InfoGeneral::findOrfail($infogeneral->id);
 
-        $infogeneral->tipo = $request->tipo;
-        $infogeneral->numsensor = $request->numsensor;
-        $infogeneral->Unidades = $request->Unidades;
         $infogeneral->SKU = $request->SKU;
+        $infogeneral->N_sensor = $request->N_sensor;
+        $infogeneral->Tipo = $request->Tipo;
+        $infogeneral->Nombre = $request->Nombre;
+        $infogeneral->Unidades = $request->Unidades;
         $infogeneral->Fecha = $request->Fecha;
+
         
         $infogeneral->save();
 
