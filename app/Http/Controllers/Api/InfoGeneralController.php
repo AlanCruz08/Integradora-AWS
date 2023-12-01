@@ -23,6 +23,7 @@ class InfoGeneralController extends Controller
        $infogeneral->numsensor = $request->numsensor;
        $infogeneral->Unidades = $request->Unidades;
        $infogeneral->SKU = $request->SKU;
+       $infogeneral->Fecha = $request->Fecha;
        
        $infogeneral->save();
 
@@ -37,6 +38,7 @@ class InfoGeneralController extends Controller
         $infogeneral->numsensor = $request->numsensor;
         $infogeneral->Unidades = $request->Unidades;
         $infogeneral->SKU = $request->SKU;
+        $infogeneral->Fecha = $request->Fecha;
         
         $infogeneral->save();
 

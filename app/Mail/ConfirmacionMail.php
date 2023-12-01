@@ -9,6 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Address;
+use Illuminate\Support\Facades\Mail;
 
 class ConfirmacionMail extends Mailable
 {
@@ -22,24 +23,7 @@ class ConfirmacionMail extends Mailable
 
     public function build()
     {
-        return $this->view('emails',['number' => $this->number]);
+        return $this->view('email',['number' => $this->number]);
     }
 
-    public function envelope()
-    {
-        return new Envelope(
-            subject: 'Confirmacion Mail',
-        );
-    }
-
-    public function content()
-    {
-        return new Content(
-            view: 'view.name',
-        );
-    }
-    public function attachments()
-    {
-        return [];
-    }
 }
