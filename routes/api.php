@@ -38,6 +38,3 @@ Route::controller(LoginController::class)->group(function(){
     Route::post('logout', 'logout');
     Route::post('verificacion', 'verificacion');
 });
-
-
-
