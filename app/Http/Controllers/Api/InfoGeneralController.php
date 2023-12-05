@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\InfoGeneral;
 use Symfony\Component\HttpFoundation\Response;
 
+
 class InfoGeneralController extends Controller
 {
     public function index()
