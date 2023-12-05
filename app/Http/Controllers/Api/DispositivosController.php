@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
+
 use App\Models\Dispositivos;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;   

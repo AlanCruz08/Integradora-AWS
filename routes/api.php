@@ -38,6 +38,3 @@ Route::controller(LoginController::class)->group(function(){
     Route::post('logout', 'logout')->middleware('auth:sanctum');;
     Route::post('verificacion', 'verificacion');
 });
-
-
-
