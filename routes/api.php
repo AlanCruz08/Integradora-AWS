@@ -35,6 +35,6 @@ Route::controller(SensorController::class)->group(function(){
 Route::controller(LoginController::class)->group(function(){
     Route::post('login', 'login');
     Route::post('register', 'register');
-    Route::post('logout', 'logout');
+    Route::post('logout', 'logout')->middleware('auth:sanctum');;
     Route::post('verificacion', 'verificacion');
 });
