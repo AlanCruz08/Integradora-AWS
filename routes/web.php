@@ -16,3 +16,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('estatica', function()
+    {
+        return view('estatica');
+    });
+
+    Route::get('/mostrar-imagen1', function () {
+        return view('estatica');
+    });

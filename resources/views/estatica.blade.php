@@ -45,14 +45,28 @@
         </div>
     </section>
 
+    <section class="advantages py-5">
+        <h2 class="text-center">Frameworks</h2>
+        <div class="container" style="display:flex; flex-direction: row; justify-content:space-around;" >
+            
+            <img src="{{ asset('img/aws.png') }}" alt="Laravel" width="200" height="200">
+            <img src="{{ asset('img/github.jpg') }}" alt="Laravel" width="200" height="200">
+            <img src="{{ asset('img/python.png') }}" alt="Laravel" width="200" height="200">
+            <img src="{{ asset('img/rastberry.png') }}" alt="Laravel" width="200" height="200">
+            <img src="{{ asset('img/arduino.png') }}" alt="Laravel" width="200" height="200">
+        </div>
+
+    </section>
+
     <footer class="bg-dark text-white py-3">
         <div class="container text-center">
             <p>&copy; 2023 Nuestro Dispositivo. Todos los derechos reservados.</p>
         </div>
     </footer>
 
-    <a href="#" class="btn btn-primary position-fixed" style="top: 20px; left: 20px;" background-image="img/flecha-hacia-atras.png">Regresar</a>
-    
+    <a href="#" class="btn btn-primary position-fixed" style="top: 20px; left: 20px;">
+        <img src="{{ asset('img/flecha-hacia-atras.png') }}" alt="Flecha hacia atrás" width="25" height="25">
+    </a>
 
 
     <!-- llamar la img de flecha-hacia-atras como boton de regreso-->
