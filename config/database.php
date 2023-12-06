@@ -93,11 +93,20 @@ return [
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
-            'mongodb' => [
-                  'driver' => 'mongodb',
-                  'dsn' => env('DB_URI', 'mongodb+srv://issacgar98:i5KRC6diYpeknrrz@cluster0.tmjuusr.mongodb.net/'),
-                  'database' => 'Integradora-AWS',
-          ],
+        'mongodb' => [
+            'dsn' => env('DB_URI', 'mongodb+srv://issacgar98:i5KRC6diYpeknrrz@cluster0.tmjuusr.mongodb.net/'),
+            'driver' => 'mongodb',
+            //'host' => env('DB_HOST', 'your-hostname'),
+            'port' => env('DB_PORT', 27017),
+            'database' => env('DB_DATABASE', 'Integradora-AWS'),
+            'username' => env('DB_USERNAME', 'your-username'),
+            'password' => env('DB_PASSWORD', 'your-password'),
+            'options' => [
+                'ssl' => true,
+                'tls' => false,
+            ],
+
+        ],
 
     ],
 
