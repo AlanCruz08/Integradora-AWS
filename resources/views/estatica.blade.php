@@ -2,15 +2,15 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Explicación de Nuestro Dispositivo</title>
+    <title>Retroalimentacion</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 
     <header class="bg-dark text-white py-5">
         <div class="container text-center">
-            <h1>Nuestro Dispositivo</h1>
-            <p>Una solución innovadora para...</p>
+            <h1>Sistema de usos Multiples</h1>
+            <p>Una solución innovadora para tu bienestar</p>
         </div>
     </header>
 
@@ -60,7 +60,7 @@
 
     <footer class="bg-dark text-white py-3">
         <div class="container text-center">
-            <p>&copy; 2023 Nuestro Dispositivo. Todos los derechos reservados.</p>
+            <p>&copy; 2023 Sistema de usos Multiples. Todos los derechos reservados.</p>
         </div>
     </footer>
 
