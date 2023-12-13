@@ -10,35 +10,52 @@ use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use GuzzleHttp\Client;
 
 class LoginController extends Controller
 {
+    private $key, $api, $client;
     protected $reglasLogin = [
-        'email'     => 'required|string|max:60',
-        'password'  => 'required|string|max:60',
+        'email' => 'required | string | max:60',
+        'password' => 'required | string | max:60',
     ];
 
     protected $reglasRegister = [
-        'name'      => 'required|string|max:60',
-        'email'     => 'required|string|max:60',
-        'password'  => 'required|string|max:60',
+        'name' => 'required | string | max:60',
+        'email' => 'required | string | max:60',
+        'password' => 'required | string | max:60',
     ];
 
     protected $reglasValidate = [
-        'id'        => 'required | numeric'
+        'id' => 'required | numeric'
     ];
 
     protected $reglasCorreo = [
-        'email'        => 'required | email'
+        'email' => 'required | email'
     ];
 
     protected $reglasVerificacion = [
-        'name'          => 'required|string|max:60',
-        'email'         => 'required | email',
-        'password'      => 'required|string|max:60',
-        'codigo'        => 'required | numeric',
+        'name' => 'required | string | max:60',
+        'email' => 'required | email',
+        'password' => 'required | string | max:60',
+        'codigo' => 'required | numeric',
 
     ];
+
+    public function __construct()
+    {
+        $this->key = env('DB_KEY');
+        $this->api = env('DB_END');
+
+        $this->client = new Client([
+            'base_uri' => $this->api,
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'api-key' => $this->key,
+            ],
+            'verify' => false,
+        ]);
+    }
 
     public function login(Request $request)
     {
@@ -51,30 +68,51 @@ class LoginController extends Controller
                 'status' => '422'
             ], 422);
 
-        $user = User::where('email', $request->email)->first();
+        //verificar si el usuario existe
 
-        if (!$user)
-            return response()->json([
-                'msg' => 'Usuario no encontrado',
-                'data' => 'error',
-                'status' => '404'
-            ], 404);
-
-        if (!Hash::check($request->password, $user->password))
-            return response()->json([
-                'msg' => 'Contraseña incorrecta',
-                'data' => 'error',
-                'status' => '401'
-            ], 401);
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'user' => $user,
+        //verificar si la contraseña es correcta
+        //crear el token de sesion
+        //devolver el token de sesion
+        // return response()->json([
+        //     'access_token' => $token,
+        //     'token_type' => 'Bearer',
+        //     'user' => $user,
             
-        ], 200);
+        // ], 200);
+
+        // try {
+
+        //     $data = [
+        //         'nombre' => 'Alan',
+        //         'correo' => 'alansasuke0@gmail.com'
+        //     ];
+
+        //     $response = $this->client->post('/app/data-erstl/endpoint/action/insertOne', [
+        //         'headers' => [
+        //             'Content-Type' => 'application/json', // Ajusta el tipo de contenido según tus necesidades
+        //             'api-key' => $this->key,
+        //         ],
+        //         'json' => $data, // Esto convierte automáticamente el arreglo a JSON
+        //         'verify' => false,
+        //     ]);
+
+        //     $data = $response->getBody()->getContents();
+        //     $feeds = json_decode($data, true);
+        //     $filteredFeed = [
+        //         'message' => $feeds['message'],
+        //         '_id' => $feeds['result']['insertedId'],
+        //     ];
+        //     return response()->json([
+        //         'msg' => 'Datos obtenidos',
+        //         'data' => $filteredFeed,
+        //     ], 200);
+        // } catch (\Exception $e) {
+        //     return response()->json([
+        //         'msg' => 'Error al recuperar registros!',
+        //         'error' => $e->getMessage(),
+        //         'status' => 500
+        //     ], 500);
+        // }
     }
 
     public function register(Request $request)
@@ -88,30 +126,73 @@ class LoginController extends Controller
                 'status' => '422'
             ], 422);
 
-        $user = User::where('email', $request->email)->first();
+        try {
+            $response = $this->client->post('/app/data-erstl/endpoint/userExisting', [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'api-key' => $this->key,
+                ],
+                'json' => ['email_user' => $request->email],
+                'verify' => false,
+            ]);
+            $statusCode = $response->getStatusCode();
 
-        if ($user)
+            $hashPassword = Hash::make($request->password);
+            $data = [
+                'name_user' => $request->name,
+                'email_user' => $request->email,
+                'password_user' => $hashPassword
+            ];
+            
+            $response = $this->client->post('/app/data-erstl/endpoint/registro', [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'api-key' => $this->key,
+                ],
+                'json' => $data,
+                'verify' => false,
+            ]);
+            $statusCode = $response->getStatusCode();
+            $data = $response->getBody()->getContents();
+            $jsonResponse = json_decode($data, true);
+
+            if ($statusCode != 201)
+                return response()->json([
+                    'msg' => 'Error al registrar',
+                    'data' => $jsonResponse,
+                    'status' => $statusCode
+                ], $statusCode);
+
+            $email = $request->email;
+            $correoEnviado = $this->enviarCorreo($email);
+    
+            if ($correoEnviado->status() != 201)
+                return response()->json([
+                    'msg' => 'Error al enviar el correo',
+                    'data' => null,
+                    'status' => '422'
+                ], 422);
+
             return response()->json([
-                'msg' => 'Usuario ya existente',
-                'data' => $user,
-                'status' => '422'
-            ], 422);
+                'msg' => $correoEnviado->original['msg'],
+                'data' => $correoEnviado->original['data'],
+                'status' => $correoEnviado->status()
+            ], 201);
 
-        $email = $request->email;
-        $correoEnviado = $this->enviarCorreo($email);
-
-        if ($correoEnviado->status() != 201)
+        } catch (\Exception $e) {
+            if ($statusCode == 400) {
+                return response()->json([
+                    'msg' => 'El usuario ya existe',
+                    'data' => null,
+                    'status' => 500
+                ], 500);
+            }
             return response()->json([
-                'msg' => 'Error al enviar el correo',
-                'data' => null,
-                'status' => '422'
-            ], 422);
-
-        return response()->json([
-            'msg' => $correoEnviado->original['msg'],
-            'data' => $correoEnviado->original['data'],
-            'status' => $correoEnviado->status()
-        ], 201);
+                'msg' => 'Error al recuperar registros!',
+                'error' => $e->getMessage(),
+                'status' => $e->getCode()
+            ], 500);
+        }
     }
 
     public function logout(Request $request)
