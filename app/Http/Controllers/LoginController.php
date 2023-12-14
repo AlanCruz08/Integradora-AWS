@@ -69,8 +69,34 @@ class LoginController extends Controller
             ], 422);
 
         //verificar si el usuario existe
-
+        $response = $this->client->post('/app/data-erstl/endpoint/userExisting', [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'api-key' => $this->key,
+            ],
+            'json' => ['email_user' => $request->email],
+            'verify' => false,
+        ]);
+        
+        $bodyResponse = $response->getBody()->getContents();
+        $jsonResponse = json_decode($bodyResponse, true);
+        
+        if ($jsonResponse['value'] == false)
+            return response()->json([
+                'msg' => 'El usuario no existe',
+                'data' => $request->email,
+                'status' => 200
+            ], 200);
+        
         //verificar si la contraseña es correcta
+        $response = $this->client->get('/app/data-erstl/endpoint/user', [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'api-key'=> $this->key,
+            ],
+            'verify' => false,
+        ]);
+
         //crear el token de sesion
         //devolver el token de sesion
         // return response()->json([
@@ -180,7 +206,6 @@ class LoginController extends Controller
             ], $statusCode);
 
         } catch (\Exception $e) {
-            
             return response()->json([
                 'msg' => 'Error al recuperar registros!',
                 'error' => $e->getMessage(),

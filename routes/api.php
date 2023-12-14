@@ -33,6 +33,7 @@ Route::controller(SensorController::class)->group(function(){
 });
 
 Route::controller(LoginController::class)->group(function(){
+    Route::get('/check', function() { return 'ok'; });
     Route::post('login', 'login');
     Route::post('register', 'register');
     Route::post('logout', 'logout')->middleware('auth:sanctum');;
