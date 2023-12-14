@@ -85,17 +85,25 @@ class LoginController extends Controller
             return response()->json([
                 'msg' => 'El usuario no existe',
                 'data' => $request->email,
-                'status' => 200
-            ], 200);
+                'status' => 404
+            ], 404);
         
         //verificar si la contraseña es correcta
-        $response = $this->client->get('/app/data-erstl/endpoint/user', [
+        $response = $this->client->post('/app/data-erstl/endpoint/dataUser', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'api-key'=> $this->key,
             ],
+            'json' => ['email_user' => $request->email],
             'verify' => false,
         ]);
+
+        //if (!Hash::check($jsonResponse['password'] == $this->reglasLogin))
+        return response()->json([
+            'msg' => 'Contraseña incorrecta',
+            'data' => $response->getBody()->getContents(),
+            'status' => 404
+        ], 404);
 
         //crear el token de sesion
         //devolver el token de sesion
