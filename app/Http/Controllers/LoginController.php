@@ -135,7 +135,16 @@ class LoginController extends Controller
                 'json' => ['email_user' => $request->email],
                 'verify' => false,
             ]);
-            $statusCode = $response->getStatusCode();
+            
+            $bodyResponse = $response->getBody()->getContents();
+            $jsonResponse = json_decode($bodyResponse, true);
+            
+            if ($jsonResponse['value'] == true)
+                return response()->json([
+                    'msg' => 'El usuario ya existe',
+                    'data' => $request->email,
+                    'status' => 200
+                ], 200);
 
             $hashPassword = Hash::make($request->password);
             $data = [
@@ -152,6 +161,7 @@ class LoginController extends Controller
                 'json' => $data,
                 'verify' => false,
             ]);
+            
             $statusCode = $response->getStatusCode();
             $data = $response->getBody()->getContents();
             $jsonResponse = json_decode($data, true);
@@ -162,31 +172,15 @@ class LoginController extends Controller
                     'data' => $jsonResponse,
                     'status' => $statusCode
                 ], $statusCode);
-
-            $email = $request->email;
-            $correoEnviado = $this->enviarCorreo($email);
-    
-            if ($correoEnviado->status() != 201)
-                return response()->json([
-                    'msg' => 'Error al enviar el correo',
-                    'data' => null,
-                    'status' => '422'
-                ], 422);
-
+            
             return response()->json([
-                'msg' => $correoEnviado->original['msg'],
-                'data' => $correoEnviado->original['data'],
-                'status' => $correoEnviado->status()
-            ], 201);
+                'msg' => 'Usuario registrado',
+                'data' => $jsonResponse,
+                'status' => $statusCode
+            ], $statusCode);
 
         } catch (\Exception $e) {
-            if ($statusCode == 400) {
-                return response()->json([
-                    'msg' => 'El usuario ya existe',
-                    'data' => null,
-                    'status' => 500
-                ], 500);
-            }
+            
             return response()->json([
                 'msg' => 'Error al recuperar registros!',
                 'error' => $e->getMessage(),
