@@ -98,13 +98,20 @@ class LoginController extends Controller
             'verify' => false,
         ]);
 
-        //if (!Hash::check($jsonResponse['password'] == $this->reglasLogin))
-        return response()->json([
-            'msg' => 'Contraseña incorrecta',
-            'data' => $response->getBody()->getContents(),
-            'status' => 404
-        ], 404);
+        $haspass = $jsonResponse['user']['password'];
+        $userProvidedPassword = $request->password;
+        if (!Hash::check($userProvidedPassword, $haspass))
+            return response()->json([
+                'msg' => 'Contraseña incorrecta',
+                'data' => $response->getBody()->getContents(),
+                'status' => 404
+            ], 404);
 
+        return response()->json([
+            'msg' => 'Contraseña correcta',
+            'data' => $response->getBody()->getContents(),
+            'status' => 200
+        ], 200);
         //crear el token de sesion
         //devolver el token de sesion
         // return response()->json([
