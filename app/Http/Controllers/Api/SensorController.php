@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Http;
 class SensorController extends Controller
 {
 
-    private $reglasRegister = [
+    private $reglasSensores = [
         'tipo' => 'required|string',
         'nSensor' => 'required|string',
         'valor' => 'required|string',
@@ -80,7 +80,7 @@ class SensorController extends Controller
 
     public function carga(Request $request)
     {
-        $validacion = Validator::make($request->all(), $this->reglasRegister);
+        $validacion = Validator::make($request->all(), $this->reglasSensores);
     
         if ($validacion->fails()) {
             return response()->json([
