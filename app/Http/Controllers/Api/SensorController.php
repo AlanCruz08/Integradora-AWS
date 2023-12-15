@@ -6,9 +6,32 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Sensores;
 use Symfony\Component\HttpFoundation\Response;
+use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Http;
 
 class SensorController extends Controller
 {
+
+    private $reglasRegister = [
+        'tipo' => 'required|string',
+        'nSensor' => 'required|string',
+        'valor' => 'required|string',
+        'fecha' => 'required|date_format:Y-m-d H:i:s',
+    ];
+
+    private $key, $api, $client;
+
+    public function __construct()
+    {
+        $this->key = env('DB_KEY');
+        $this->api = env('DB_END');
+
+        $this->client = Http::withHeaders([
+            'api-key' => $this->key,
+            'Content-Type' => 'application/json',
+        ])->baseUrl($this->api)->withoutVerifying();
+    }
 
     public function datos(){
         
@@ -55,20 +78,57 @@ class SensorController extends Controller
     }
 
 
-    public function cargarDatos(Request $request)
+    public function carga(Request $request)
     {
-        // Obtén los datos enviados desde Python
-        $data = $request->json()->all();
-
-        // guardarlos en la base de datos de mongo
-        $sensores = new Sensores();
-        $sensores->N_sensor = $data['N_sensor'];
-        $sensores->Valor = $data['Valor'];
-        $sensores->Descripcion = $data['Descripcion'];
-        $sensores->save();
-
-
-        // Devuelve una respuesta
-        return response()->json(['message' => 'Datos recibidos correctamente en Laravel'], 200);
+        $validacion = Validator::make($request->all(), $this->reglasRegister);
+    
+        if ($validacion->fails()) {
+            return response()->json([
+                'msg' => 'Error en las validaciones',
+                'data' => $validacion->errors(),
+                'status' => 422
+            ], 422);
+        }
+    
+        try {
+            $data = [
+                'tipo' => $request->tipo,
+                'nSensor' => $request->nSensor,
+                'valor' => $request->valor,
+                'fecha' => $request->fecha,
+            ];
+    
+            // Proceso de registro de datos en tu API o sistema
+            $response = $this->client->post('/app/data-erstl/endpoint/registro-datos', [
+                'json' => $data,
+            ]);
+    
+            $statusCode = $response->status();
+    
+            if ($statusCode !== 201) {
+                $jsonResponse = $response->json();
+                return response()->json([
+                    'msg' => 'Error al registrar datos',
+                    'data' => $jsonResponse,
+                    'status' => $statusCode
+                ], $statusCode);
+            }
+    
+            $jsonResponse = $response->json();
+            return response()->json([
+                'msg' => 'Datos registrados correctamente',
+                'data' => $jsonResponse,
+                'status' => $statusCode
+            ], $statusCode);
+    
+        } catch (\Exception $e) {
+            return response()->json([
+                'msg' => 'Error al procesar los datos',
+                'error' => $e->getMessage(),
+                'status' => 500
+            ], 500);
+        }
     }
+    
 }
+
