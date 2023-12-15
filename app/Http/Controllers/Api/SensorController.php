@@ -9,6 +9,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SensorController extends Controller
 {
+
+    public function datos(){
+        
+    }
     public function index()
     {
         $sensores = Sensores::all();

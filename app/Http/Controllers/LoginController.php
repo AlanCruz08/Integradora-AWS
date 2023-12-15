@@ -11,6 +11,7 @@ use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use GuzzleHttp\Client;
+use Illuminate\Support\Str;
 
 class LoginController extends Controller
 {
@@ -110,54 +111,48 @@ class LoginController extends Controller
                 'status' => 404
             ], 404);
 
+        //crear el token de sesion
+        $token = $this->generarToken();
+        $data = [
+            'email_user' => $request->email,
+            'token' => $token
+        ];
+        $response = $this->client->post('/app/data-erstl/endpoint/saveToken', [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'api-key'=> $this->key,
+            ],
+            'json' => $data,
+            'verify' => false,
+        ]);
+        $bodyResponse = $response->getBody()->getContents();
+        $jsonResponse = json_decode($bodyResponse, true);
+        $statusCode = $response->getStatusCode();
+        
+        if ($statusCode != 201 || $statusCode != 200)
+            return response()->json([
+                'msg' => 'Error al guardar el token',
+                'data' => null,
+                'status' => 404
+            ], 404);
+        
         return response()->json([
-            'msg' => 'Contraseña correcta',
-            'data' => $request->email,
+            'msg' => 'Sesion iniciada',
+            'data' => $token,
             'status' => 200
         ], 200);
-        //crear el token de sesion
-        
-        //devolver el token de sesion
-        // return response()->json([
-        //     'access_token' => $token,
-        //     'token_type' => 'Bearer',
-        //     'user' => $user,
-            
-        // ], 200);
+    }
+    public function generarToken()
+    {
+        $token = tap(new PersonalAccessToken, function ($token) {
+            $token->forceFill([
+                'name' => 'API Token',
+                'token' => hash('sha256', Str::random(40)),
+                'abilities' => ['*'],
+            ])->save();
+        });
 
-        // try {
-
-        //     $data = [
-        //         'nombre' => 'Alan',
-        //         'correo' => 'alansasuke0@gmail.com'
-        //     ];
-
-        //     $response = $this->client->post('/app/data-erstl/endpoint/action/insertOne', [
-        //         'headers' => [
-        //             'Content-Type' => 'application/json', // Ajusta el tipo de contenido según tus necesidades
-        //             'api-key' => $this->key,
-        //         ],
-        //         'json' => $data, // Esto convierte automáticamente el arreglo a JSON
-        //         'verify' => false,
-        //     ]);
-
-        //     $data = $response->getBody()->getContents();
-        //     $feeds = json_decode($data, true);
-        //     $filteredFeed = [
-        //         'message' => $feeds['message'],
-        //         '_id' => $feeds['result']['insertedId'],
-        //     ];
-        //     return response()->json([
-        //         'msg' => 'Datos obtenidos',
-        //         'data' => $filteredFeed,
-        //     ], 200);
-        // } catch (\Exception $e) {
-        //     return response()->json([
-        //         'msg' => 'Error al recuperar registros!',
-        //         'error' => $e->getMessage(),
-        //         'status' => 500
-        //     ], 500);
-        // }
+        return $token->plainTextToken;
     }
 
     public function register(Request $request)
