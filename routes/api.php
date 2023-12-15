@@ -30,6 +30,8 @@ Route::controller(SensorController::class)->group(function(){
     Route::post('sensor','store');
     Route::put('sensor/{registro}', 'update');
     Route::delete('sensor/{registro}', 'destroy');
+    Route::get('datos', 'datos');
+    Route::post('carga','carga');
 });
 
 Route::controller(LoginController::class)->group(function(){
