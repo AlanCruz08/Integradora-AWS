@@ -17,7 +17,7 @@ class SensorController extends Controller
         'tipo' => 'required|string',
         'nSensor' => 'required|string',
         'valor' => 'required|string',
-        'fecha' => 'required|date_format:Y-m-d H:i:s',
+        'fecha' => 'required',
     ];
 
     private $key, $api, $client;
@@ -27,15 +27,26 @@ class SensorController extends Controller
         $this->key = env('DB_KEY');
         $this->api = env('DB_END');
 
-        $this->client = Http::withHeaders([
-            'api-key' => $this->key,
-            'Content-Type' => 'application/json',
-        ])->baseUrl($this->api)->withoutVerifying();
+        $this->client = new Client([
+            'base_uri' => $this->api,
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'api-key' => $this->key,
+            ],
+            'verify' => false,
+        ]);
     }
 
-    public function datos(){
+    public function datos(Request $request){
         try {
-            $response = $this->client->get('/app/data-erstl/endpoint/alldata');
+            $response = $this->client->post('/app/data-erstl/endpoint/alldata', [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'api-key' => $this->key,
+                ],
+                'json' => ['email_user' => $request->email],
+                'verify' => false,
+            ]);
             $statusCode = $response->getStatusCode();
             $data = $response->getBody()->getContents();
 
@@ -54,71 +65,38 @@ class SensorController extends Controller
             ], 500);
         }
     }
-
-    public function index()
-    {
-        $sensores = Sensores::all();
-        return response()->json($sensores, Response::HTTP_OK);
-    }
-
-    public function store(Request $request)
-    {
-        $sensores = new Sensores();
-
-        $sensores->N_sensor = $request->N_sensor;
-        $sensores->Valor = $request->Valor;
-        $sensores->Descripcion = $request->Descripcion;
-        
-        $sensores->save();
-
-        return response()->json($sensores, Response::HTTP_CREATED);
-    }
-
-    public function update(Request $request, Sensores $sensores)
-    {
-        $sensores=Sensores::findOrfail($sensores->id);
-
-        $sensores->N_sensor = $request->N_sensor;
-        $sensores->Valor = $request->Valor;
-        $sensores->Descripcion = $request->Descripcion;
-        
-        $sensores->save();
-
-        return response()->json($sensores, Response::HTTP_OK);
-
-    }
-
-    public function destroy(Sensores $sensores)
-    {
-        $sensores->delete();
-
-        return response()->json(null, Response::HTTP_OK);
-
-    }
     
     public function carga(Request $request)
     {
-        $validacion = Validator::make($request->all(), $this->reglasSensores);
+        // $validacion = Validator::make($request->all(), $this->reglasSensores);
     
-        if ($validacion->fails()) {
-            return response()->json([
-                'msg' => 'Error en las validaciones',
-                'data' => $validacion->errors(),
-                'status' => 422
-            ], 422);
-        }
+        // if ($validacion->fails()) {
+        //     return response()->json([
+        //         'msg' => 'Error en las validaciones',
+        //         'data' => $validacion->errors(),
+        //         'status' => 422
+        //     ], 422);
+        // }
     
         try {
-            $data = $request->getBody()->getContents();
-            // Proceso de registro de datos en tu API o sistema
+            $data = json_decode($request->getContent(), true);
+            $completeData = [
+                "email_user" => "alansasuke0@gmail.com",
+                "data" => $data,
+            ];
             $response = $this->client->post('/app/data-erstl/endpoint/carga', [
-                'json' => $request->all(),
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'api-key' => $this->key,
+                ],
+                'json' => $completeData,
+                'verify' => false,
             ]);
-    
-            $statusCode = $response->status();
+
+            $statusCode = $response->getStatusCode();
     
             if ($statusCode !== 201) {
-                $jsonResponse = $response->json();
+                $jsonResponse = $response->getBody()->getContents();
                 return response()->json([
                     'msg' => 'Error al registrar datos',
                     'data' => $jsonResponse,
@@ -126,10 +104,9 @@ class SensorController extends Controller
                 ], $statusCode);
             }
     
-            $jsonResponse = $response->json();
             return response()->json([
                 'msg' => 'Datos registrados correctamente',
-                'data' => $jsonResponse,
+                'data' => null,
                 'status' => $statusCode
             ], $statusCode);
     
