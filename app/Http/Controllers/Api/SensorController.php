@@ -54,6 +54,7 @@ class SensorController extends Controller
             ], 500);
         }
     }
+
     public function index()
     {
         $sensores = Sensores::all();
@@ -95,8 +96,6 @@ class SensorController extends Controller
 
     }
     
-
-
     public function carga(Request $request)
     {
         $validacion = Validator::make($request->all(), $this->reglasSensores);
@@ -110,16 +109,10 @@ class SensorController extends Controller
         }
     
         try {
-            $data = [
-                'tipo' => $request->tipo,
-                'nSensor' => $request->nSensor,
-                'valor' => $request->valor,
-                'fecha' => $request->fecha,
-            ];
-    
+            $data = $request->getBody()->getContents();
             // Proceso de registro de datos en tu API o sistema
-            $response = $this->client->post('/app/data-erstl/endpoint/registro-datos', [
-                'json' => $data,
+            $response = $this->client->post('/app/data-erstl/endpoint/carga', [
+                'json' => $request->all(),
             ]);
     
             $statusCode = $response->status();
