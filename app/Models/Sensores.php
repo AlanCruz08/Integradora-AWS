@@ -11,4 +11,17 @@ class Sensores extends Model
 
     protected $connection = 'mongodb';
     protected $collection = 'sensores';
+    protected $primaryKey = '_id'; // Nombre del campo ID
+
+    
+    protected $fillable = [
+        'tipo',
+        'nSensor',
+        'valor',
+        'fecha',
+    ];
+
+    public $timestamps = false;
+
+
 }

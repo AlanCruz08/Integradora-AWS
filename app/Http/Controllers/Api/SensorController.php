@@ -49,9 +49,7 @@ class SensorController extends Controller
                 'error' => $e->getMessage(),
                 'status' => 500
             ], 500);
-        }
-    
-        
+        } 
     }
     public function index()
     {
