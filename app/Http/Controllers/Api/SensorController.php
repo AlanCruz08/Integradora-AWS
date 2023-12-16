@@ -35,21 +35,24 @@ class SensorController extends Controller
 
     public function datos(){
         try {
-            $datos = Sensores::all();
+            $response = $this->client->get('/app/data-erstl/endpoint/alldata');
+            $statusCode = $response->getStatusCode();
+            $data = $response->getBody()->getContents();
+
+            $datos = json_decode($data, true);
 
             return response()->json([
-                'msg' => 'Datos recuperados correctamente desde MongoDB',
+                'msg' => 'Datos obtenidos de la API de MongoDB',
                 'data' => $datos,
-                'status' => 200
-            ], 200);
-
+                'status' => $statusCode
+            ], $statusCode);
         } catch (\Exception $e) {
             return response()->json([
-                'msg' => 'Error al obtener datos desde MongoDB',
+                'msg' => 'Error al obtener datos de la API de MongoDB',
                 'error' => $e->getMessage(),
                 'status' => 500
             ], 500);
-        } 
+        }
     }
     public function index()
     {
