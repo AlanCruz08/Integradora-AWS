@@ -34,6 +34,23 @@ class SensorController extends Controller
     }
 
     public function datos(){
+        try {
+            $datos = Sensores::all();
+
+            return response()->json([
+                'msg' => 'Datos recuperados correctamente desde MongoDB',
+                'data' => $datos,
+                'status' => 200
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'msg' => 'Error al obtener datos desde MongoDB',
+                'error' => $e->getMessage(),
+                'status' => 500
+            ], 500);
+        }
+    
         
     }
     public function index()
@@ -76,6 +93,7 @@ class SensorController extends Controller
         return response()->json(null, Response::HTTP_OK);
 
     }
+    
 
 
     public function carga(Request $request)
@@ -129,6 +147,5 @@ class SensorController extends Controller
             ], 500);
         }
     }
-    
 }
 
