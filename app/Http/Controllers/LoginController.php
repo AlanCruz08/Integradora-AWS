@@ -110,49 +110,12 @@ class LoginController extends Controller
                 'data' => null,
                 'status' => 404
             ], 404);
-
-        //crear el token de sesion
-        $token = $this->generarToken();
-        $data = [
-            'email_user' => $request->email,
-            'token' => $token
-        ];
-        $response = $this->client->post('/app/data-erstl/endpoint/saveToken', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'api-key'=> $this->key,
-            ],
-            'json' => $data,
-            'verify' => false,
-        ]);
-        $bodyResponse = $response->getBody()->getContents();
-        $jsonResponse = json_decode($bodyResponse, true);
-        $statusCode = $response->getStatusCode();
-        
-        if ($statusCode != 201 || $statusCode != 200)
-            return response()->json([
-                'msg' => 'Error al guardar el token',
-                'data' => null,
-                'status' => 404
-            ], 404);
         
         return response()->json([
             'msg' => 'Sesion iniciada',
-            'data' => $token,
+            'data' => $request->email,
             'status' => 200
         ], 200);
-    }
-    public function generarToken()
-    {
-        $token = tap(new PersonalAccessToken, function ($token) {
-            $token->forceFill([
-                'name' => 'API Token',
-                'token' => hash('sha256', Str::random(40)),
-                'abilities' => ['*'],
-            ])->save();
-        });
-
-        return $token->plainTextToken;
     }
 
     public function register(Request $request)
