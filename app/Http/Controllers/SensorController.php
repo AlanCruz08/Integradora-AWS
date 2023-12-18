@@ -74,5 +74,20 @@ class SensorController extends Controller
             'status' => $statusCode
         ], $statusCode);
     }
+    public function historico(Request $request, $id)
+    {
+        $response = $this->client->post('/app/data-erstl/endpoint/historico', [
+            'json' => ['email_user' => $request->email, 'id' => $id],
+        ]);
+        $statusCode = $response->getStatusCode();
+        $data = $response->getBody()->getContents();
+        $dataJson = json_decode($data, true);
+        
+        return response()->json([
+            'msg' => 'Datos obtenidos de la API de MongoDB',
+            'data' => $dataJson,
+            'status' => $statusCode
+        ], $statusCode);
+    }
 }
 

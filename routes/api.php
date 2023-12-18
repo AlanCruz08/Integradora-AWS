@@ -7,6 +7,7 @@ use App\Http\Controllers\LoginController;
 Route::controller(SensorController::class)->group(function(){
     Route::post('datos', 'datos');
     Route::post('carga','carga');
+    Route::post('historico/{id}','historico')->where('id', '[0-9]+');
 });
 
 Route::controller(LoginController::class)->group(function(){
