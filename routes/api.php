@@ -1,43 +1,15 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\DispositivosController;
-use App\Http\Controllers\Api\InfoGeneralController;
-use App\Http\Controllers\Api\SensorController;
+use App\Http\Controllers\SensorController;
 use App\Http\Controllers\LoginController;
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-Route::controller(DispositivosController::class)->group(function(){
-    Route::get('dispositivos', 'index');
-    Route::post('dispositivos','store');
-    Route::put('dispositivos/{registro}', 'update');
-    Route::delete('dispositivos/{registro}', 'destroy');
-});
-
-Route::controller(InfoGeneralController::class)->group(function(){
-    Route::get('infogeneral', 'index');
-    Route::post('infogeneral','store');
-    Route::put('infogeneral/{registro}', 'update');
-    Route::delete('infogeneral/{registro}', 'destroy');
-});
-
 Route::controller(SensorController::class)->group(function(){
-    Route::get('sensor', 'index');
-    Route::post('sensor','store');
-    Route::put('sensor/{registro}', 'update');
-    Route::delete('sensor/{registro}', 'destroy');
     Route::post('datos', 'datos');
     Route::post('carga','carga');
 });
 
 Route::controller(LoginController::class)->group(function(){
-    Route::get('/check', function() { return 'ok'; });
     Route::post('login', 'login');
     Route::post('register', 'register');
-    Route::post('logout', 'logout')->middleware('auth:sanctum');;
-    Route::post('verificacion', 'verificacion');
 });
