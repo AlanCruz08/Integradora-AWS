@@ -33,13 +33,13 @@ class SensorController extends Controller
     }
 
     public function datos(Request $request){
-        $response = $this->client->post('/app/data-erstl/endpoint/alldata', [
+        $response = $this->client->post('/app/data-erstl/endpoint/actual', [
             'json' => ['email_user' => $request->email],
         ]);
+
         $statusCode = $response->getStatusCode();
         $data = $response->getBody()->getContents();
         $dataJson = json_decode($data, true);
-
         return response()->json([
             'msg' => 'Datos obtenidos de la API de MongoDB',
             'data' => $dataJson,
